@@ -12,12 +12,10 @@ package:
   version: ${{ version }}
 
 source:
-  - url: https://pypi.org/packages/source/s/splunk-sdk/splunk-sdk-${{ version }}.tar.gz
-    sha256: 36d27f83e7cc8309be6e3b92e46c547caea566b0c006238025073843e586e5a8
-  # The sdist ships no license file, so take it from the matching upstream tag.
-  - url: https://raw.githubusercontent.com/splunk/splunk-sdk-python/${{ version }}/LICENSE
-    sha256: cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30
-    file_name: LICENSE
+  # The PyPI sdist for this release ships no license file, so build from the
+  # upstream tag archive instead; its splunklib/ and setup.py are identical.
+  url: https://github.com/splunk/splunk-sdk-python/archive/refs/tags/${{ version }}.tar.gz
+  sha256: 14f9dfebf0688784baf172caba8358554c5b2e8ba494c044bb0744e94cdd6437
 
 build:
   number: 0
