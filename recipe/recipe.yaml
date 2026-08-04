@@ -2,18 +2,20 @@
 schema_version: 1
 
 context:
-  version: "3.0.0"
-  # splunk-sdk requires python >=3.13, which is newer than conda-forge's
-  # currently supported minimum python version.
-  python_min: "3.13"
+  version: "1.7.2"
+  # Pinned rather than inherited: this is a frozen old release, so it must not
+  # follow conda-forge's minimum past the python 3.12 ceiling noted below.
+  python_min: "3.10"
 
 package:
   name: splunk-sdk
   version: ${{ version }}
 
 source:
-  url: https://pypi.org/packages/source/s/splunk-sdk/splunk_sdk-${{ version }}.tar.gz
-  sha256: 9e2c0be4ada75c6cb536c3add636fe634d31b670c141f2a59dcf8d623753e192
+  # The PyPI sdist for this release ships no license file, so build from the
+  # upstream tag archive instead; its splunklib/ and setup.py are identical.
+  url: https://github.com/splunk/splunk-sdk-python/archive/refs/tags/${{ version }}.tar.gz
+  sha256: 14f9dfebf0688784baf172caba8358554c5b2e8ba494c044bb0744e94cdd6437
 
 build:
   number: 0
@@ -23,10 +25,13 @@ build:
 requirements:
   host:
     - python ${{ python_min }}.*
-    - setuptools >=82.0.1
+    - setuptools
     - pip
   run:
-    - python >=${{ python_min }}
+    # splunklib vendors six 1.14, whose meta path importer only implements the
+    # find_module/load_module API that python 3.12 removed, so importing
+    # splunklib.six.moves (and therefore splunklib itself) fails on >=3.12.
+    - python >=${{ python_min }},<3.12
 
 tests:
   - python:
